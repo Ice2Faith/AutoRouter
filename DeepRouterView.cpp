@@ -90,8 +90,8 @@ void SetMap()
 	settextcolor(RGB(0, 255, 255));
 	settextstyle(LINES*size * 3 / 100, LINES*size * 3 / 100, "黑体");
 	outtextxy(LINES*size * 20 / 100, COLS*size * 10 / 100, "深度寻路展示");
-	outtextxy(LINES*size * 20 / 100, COLS*size * 20 / 100, "1:设置墙壁");
-	outtextxy(LINES*size * 20 / 100, COLS*size * 30 / 100, "2:设置空白");
+	outtextxy(LINES*size * 20 / 100, COLS*size * 20 / 100, "1/左键:设置墙壁");
+	outtextxy(LINES*size * 20 / 100, COLS*size * 30 / 100, "2/右键:设置空白");
 	outtextxy(LINES*size * 20 / 100, COLS*size * 40 / 100, "3:设置出发点");
 	outtextxy(LINES*size * 20 / 100, COLS*size * 50 / 100, "4:设置终点");
 	outtextxy(LINES*size * 20 / 100, COLS*size * 60 / 100, "*:结束绘制");
@@ -118,12 +118,26 @@ void SetMap()
 	char set = '\0';
 	while (1)
 	{
-		set = _getch();
+		set = '\0';
+		if (_kbhit())
+		{
+			set = _getch();
+			fflush(stdin);
+		}
+		
 		while (MouseHit())
 		{
 			msg = GetMouseMsg();
 			temp.x = msg.y;
 			temp.y = msg.x;
+			if (msg.uMsg == WM_LBUTTONDOWN)
+			{
+				Map[temp.x / size][temp.y / size] = 1;
+			}
+			if (msg.uMsg == WM_RBUTTONDOWN)
+			{
+				Map[temp.x / size][temp.y / size] = 0;
+			}
 		}
 		
 		if (set == '*')
@@ -132,7 +146,7 @@ void SetMap()
 		{
 			Map[temp.x / size][temp.y / size] = 1;
 		}
-		 if (set == '2')
+		if (set == '2')
 		{
 			Map[temp.x / size][temp.y / size] = 0;
 		}
